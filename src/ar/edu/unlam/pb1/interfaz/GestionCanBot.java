@@ -4,35 +4,51 @@ import java.util.Scanner;
 
 import ar.edu.unlam.pb1.controlador.Tareas;
 import ar.edu.unlam.pb1.dominio.CanBot;
+import ar.edu.unlam.pb1.dominio.enums.Estado;
 import ar.edu.unlam.pb1.dominio.enums.TipoMision;
-import ar.edu.unlam.pb1.enums.MenuPrincipal;
+import ar.edu.unlam.pb1.interfaz.enums.MenuPrincipal;
 
 public class GestionCanBot {
 
 	private static Scanner teclado = new Scanner(System.in);
-	
+	public static final String RESET = "\u001B[0m";
+	public static final String VERDE = "\u001B[32m";
+	public static final String AMARILLO = "\u001B[33m";
+	public static final String AZUL = "\u001B[34m";
+	public static final String MORADO = "\u001B[35m";
+	public static final String CYAN = "\u001B[36m";
+	public static final String NEGRITA = "\u001B[1m";
 
 	public static void main(String[] args) {
 
+		mostrarMensaje(MORADO + "--- SISTEMA DE CANBOTS MILITARES --- \n");
+
 		MenuPrincipal opcion = null;
-		String nombreOperador = ingresarString("\nIngrese el nombre del operativo");
-
-		int cantidadBots = ingresarEntero("\n Ingrese la cantidad maxima de bots");
-
+		String nombreOperador = ingresarString(AZUL + "\n Ingrese el nombre del operativo: \n");
+		int cantidadBots = ingresarEntero("\n Ingrese la cantidad maxima de bots: \n");
 		Tareas tarea = new Tareas(nombreOperador, cantidadBots);
 
-		mostrarMensaje("\n\nLa contrasenia generada es: " + tarea.getContrasenia());
+		mostrarMensaje(VERDE + "\n Su contrasenia es: " + tarea.getContrasenia() + RESET);
 
 		boolean sesionIniciada = false;
+		int intentosRestantes = 3;
 
-		String contraseniaIngresada = "";
-
-		do {
-			
-			contraseniaIngresada = ingresarString("\n Ingrese la contrasenia para continuar:");
+		while (!sesionIniciada && intentosRestantes > 0) {
+			String contraseniaIngresada = ingresarString(
+					"\n Ingrese la contraseña para continuar (" + intentosRestantes + " intento(s) restante(s)):");
 			sesionIniciada = tarea.iniciarSesion(contraseniaIngresada);
-		} while (!sesionIniciada);
-		
+
+			if (!sesionIniciada) {
+				intentosRestantes--;
+				mostrarError("Contraseña incorrecta.");
+			}
+		}
+
+		if (!sesionIniciada) {
+			mostrarError("Demasiados intentos fallidos. El sistema ha sido bloqueado.");
+			return;
+		}
+
 		do {
 
 			mostrarMenuPrincipal();
@@ -52,18 +68,29 @@ public class GestionCanBot {
 				modificarCanBot(tarea);
 				break;
 			case MOSTRAR_CANBOTS:
-				tarea.mostrarCanBots();
+				mostrarMensaje(tarea.mostrarCanBots());
 				break;
 			case ASIGNAR_MISION:
 				asignarMision(tarea);
 				break;
 			case CARGAR_CANBOT:
 				cargarCanbot(tarea);
+				break;
+			case TERMINAR_MISIONES:
+				terminarMisiones(tarea);
+				break;
+			case ESTADISTICAS:
+				mostrarMensaje(tarea.mostrarEstadisticasGenerales());
+				break;
+			case MOSTRAR_RECONOCIMIENTO:
+				mostrarMensaje(tarea.mostrarCanBotsDeReconocimiento());
+				break;
+			case MOSTRAR_TRANSPORTE:
+				mostrarMensaje(tarea.mostrarCanBotsDeTransporte());
+				break;
 			case SALIR:
 				mostrarMensaje("\n Hasta luego!");
 				break;
-			case TERMINAR_MISIONES:
-				
 			default:
 				mostrarError("Opción inválida.");
 			}
@@ -82,10 +109,10 @@ public class GestionCanBot {
 	private static TipoMision elegirTipoMision() {
 
 		TipoMision[] tipos = TipoMision.values();
+
 		for (int i = 0; i < tipos.length; i++) {
 			mostrarMensaje((i + 1) + ". " + tipos[i]);
 		}
-
 		int opcion = ingresarEntero("Seleccione tipo de misión:");
 
 		while (opcion < 1 || opcion > tipos.length) {
@@ -102,15 +129,20 @@ public class GestionCanBot {
 	 */
 	private static void crearCanBot(Tareas tarea) {
 		int id;
+		CanBot existente;
 		do {
+			id = ingresarEntero(MORADO + "Ingrese ID del CanBot:");
 
-			id = ingresarEntero("Ingrese ID del CanBot:");
 			if (id < 1) {
 				mostrarError("El ID debe ser positivo.");
-
-				/// Validar ID existente
 			}
-		} while (id < 1);
+
+			existente = tarea.obtenerPorId(id);
+			if (existente != null) {
+				mostrarError("El ID ya existe. Ingrese uno diferente.");
+			}
+
+		} while (id < 1 || existente != null);
 
 		String nombre = ingresarString("Ingrese nombre del CanBot:");
 
@@ -123,9 +155,7 @@ public class GestionCanBot {
 			}
 		} while (bateria < 0 || bateria > 100);
 
-		TipoMision tipoMision = elegirTipoMision();
-
-		CanBot nuevo = new CanBot(id, nombre, bateria, tipoMision);
+		CanBot nuevo = new CanBot(id, nombre, bateria);
 		if (tarea.agregarCanBot(nuevo)) {
 			mostrarMensaje("CanBot agregado correctamente.");
 		} else {
@@ -138,12 +168,22 @@ public class GestionCanBot {
 	 *
 	 */
 	private static void activarCanBot(Tareas tarea) {
-		int id = ingresarEntero("Ingrese ID del CanBot a activar:");
+		int id = ingresarEntero(CYAN + "Ingrese ID del CanBot:");
 
-		if (tarea.activarCanBot(id)) {
-			mostrarMensaje("CanBot activado correctamente.");
+		CanBot bot = tarea.obtenerPorId(id);
+
+		if (bot != null) {
+			if (bot.getEstado() == Estado.EN_REPARACION) {
+				bot.recargarBateria();
+				bot.setEstado(Estado.DISPONIBLE);
+				mostrarMensaje(VERDE + "CanBot reparado y activado. Batería recargada al 100%.");
+			} else if (bot.getEstado() == Estado.DISPONIBLE) {
+				mostrarMensaje(AMARILLO + "El CanBot ya esta activo y disponible.");
+			} else {
+				mostrarError("El CanBot no esta en reparacion. Estado actual: " + bot.getEstado());
+			}
 		} else {
-			mostrarError("No se encontró el CanBot.");
+			mostrarError("No se encontro el CanBot.");
 		}
 	}
 
@@ -194,28 +234,36 @@ public class GestionCanBot {
 	 */
 	private static void asignarMision(Tareas tarea) {
 
-		int id = ingresarEntero("Ingrese ID del CanBot:");
+		int id = ingresarEntero(VERDE + "Ingrese ID del CanBot:");
 
 		TipoMision tipoMision = elegirTipoMision();
 
 		if (tarea.asignarMision(id, tipoMision)) {
-			mostrarMensaje("Misión asignada correctamente.");
+			mostrarMensaje("Misión asignada correctamente." + RESET);
 		} else {
 			mostrarError("Error al asignar misión. Verifique el estado del CanBot.");
 		}
 	}
 
-	// cargar el canbot
-
+	/**
+	 * Carga la bateria del canbot.
+	 *
+	 */
 	private static void cargarCanbot(Tareas tarea) {
-		int id = ingresarEntero("ingrese el id del canbot a cargar");
+		int id = ingresarEntero("Ingrese ID del CanBot:");
 		tarea.cargarBot(id);
 	}
-	//terminar misiones asignadas
-	
+
+	/**
+	 * Termina la mision del canbot.
+	 *
+	 */
 	private static void terminarMisiones(Tareas tarea) {
-		int id = ingresarEntero("ingrese el id del canbot a cargar");
-		
+		int id = ingresarEntero(AZUL + "Ingrese el ID del CanBot:");
+
+		String resultado = tarea.terminarMisionDeCanBot(id);
+
+		mostrarMensaje(resultado);
 	}
 
 	/**
@@ -226,7 +274,7 @@ public class GestionCanBot {
 	private static MenuPrincipal ingresarOpcionElegida() {
 		int opcion = 0;
 		do {
-			opcion = ingresarEntero("Ingrese la opcion deseada");
+			opcion = ingresarEntero("Ingrese la opcion deseada" + RESET);
 
 		} while (opcion < 1 || opcion > MenuPrincipal.values().length);
 
@@ -234,7 +282,7 @@ public class GestionCanBot {
 	}
 
 	private static void mostrarMenuPrincipal() {
-		String menu = "--- MENÚ DE GESTIÓN DE BOTS MILITARES --- \n";
+		String menu = AMARILLO + "--- MENÚ DE GESTIÓN DE BOTS MILITARES --- \n";
 		for (int i = 0; i < MenuPrincipal.values().length; i++) {
 			menu += (i + 1) + ". " + MenuPrincipal.values()[i].getDescripcion() + "\n";
 		}
@@ -250,8 +298,6 @@ public class GestionCanBot {
 		System.out.println(mensaje);
 		return teclado.nextInt();
 	}
-
-	// Ingresar mensaje
 
 	public static String ingresarString(String mensaje) {
 		mostrarMensaje(mensaje);
