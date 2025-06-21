@@ -124,7 +124,7 @@ public class GestionCanBot {
 	}
 
 	/**
-	 * Crea el CanBot, Agregando un elemento al array.
+	 * Crea el Canbot, Agregando un elemento al array.
 	 *
 	 */
 	private static void crearCanBot(Tareas tarea) {
@@ -164,7 +164,7 @@ public class GestionCanBot {
 	}
 
 	/**
-	 * Activa el CanBot, Buscando por id dentro del array.
+	 * Activa el Canbot, Buscando por id dentro del array.
 	 *
 	 */
 	private static void activarCanBot(Tareas tarea) {
@@ -188,48 +188,48 @@ public class GestionCanBot {
 	}
 
 	/**
-	 * Desactiva el CanBot, Buscando por id dentro del array.
+	 * Desactiva el Canbot, Buscando por id dentro del array.
 	 *
 	 */
 	private static void desactivarCanBot(Tareas tarea) {
 
-		int id = ingresarEntero("Ingrese ID del CanBot a desactivar:");
+		int id = ingresarEntero("Ingrese ID del CanBot:");
 
 		if (tarea.desactivarCanBot(id)) {
-			mostrarMensaje("CanBot eliminado correctamente.");
+			mostrarMensaje("CanBot ha sido desactivado correctamente.");
 		} else {
-			mostrarError("No se encontró el CanBot.");
+			mostrarError("No se encontro el CanBot.");
 		}
 	}
 
 	/**
-	 * Modifica el CanBot, Buscando por id dentro del array.
+	 * Modifica el Canbot, Buscando por id dentro del array.
 	 *
 	 */
 	private static void modificarCanBot(Tareas tarea) {
 
-		int id = ingresarEntero("Ingrese ID del CanBot a modificar:");
+		int id = ingresarEntero("Ingrese ID del CanBot:");
 
 		String nombre = ingresarString("Nuevo nombre:");
 
-		int bateria = ingresarEntero("Nueva batería (0-100):");
+		int bateria = ingresarEntero("Nueva bateria (0-100):");
 
 		if (bateria < 0 || bateria > 100) {
-			mostrarError("Nivel de batería inválido.");
+			mostrarError("Nivel de bateria invalido.");
 			return;
 		}
 
 		TipoMision tipoMision = elegirTipoMision();
 
 		if (tarea.modificarCanBot(id, nombre, bateria, tipoMision)) {
-			mostrarMensaje("CanBot modificado exitosamente.");
+			mostrarMensaje("Canbot modificado exitosamente.");
 		} else {
-			mostrarError("CanBot no encontrado.");
+			mostrarError("Canbot no encontrado.");
 		}
 	}
 
 	/**
-	 * Asigna mision al CanBot, Buscando por id dentro del array.
+	 * Asigna mision al Canbot, Buscando por id dentro del array.
 	 *
 	 */
 	private static void asignarMision(Tareas tarea) {

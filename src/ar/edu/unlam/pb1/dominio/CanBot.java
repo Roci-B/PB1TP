@@ -6,7 +6,7 @@ import ar.edu.unlam.pb1.dominio.enums.Estado;
 import ar.edu.unlam.pb1.dominio.enums.TipoMision;
 
 /**
- * La clase que representa un CanBot.
+ * La clase que representa un Canbot.
  * 
  */
 
@@ -23,11 +23,11 @@ public class CanBot {
 	private TipoMision ultimoTipoMision;
 
 	/**
-	 * Constructor de un CanBot.
+	 * Constructor de un Canbot.
 	 *
-	 * @param id         El ID del CanBot.
-	 * @param nombre     El nombre del CanBot.
-	 * @param bateria    La beteria del CanBot.
+	 * @param id         El ID del Canbot.
+	 * @param nombre     El nombre del Canbot.
+	 * @param bateria    La beteria del Canbot.
 	 * @param tipoMision El tipo de mision a asignar.
 	 */
 	public CanBot(int id, String nombre, int bateria) {
@@ -42,7 +42,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Muestra el ID del CanBot.
+	 * Muestra el ID del Canbot.
 	 * 
 	 */
 	public int getId() {
@@ -50,7 +50,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Muestra el nombre del CanBot.
+	 * Muestra el nombre del Canbot.
 	 * 
 	 */
 	public String getNombre() {
@@ -58,7 +58,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Muestra la bateria del CanBot.
+	 * Muestra la bateria del Canbot.
 	 * 
 	 */
 	public int getBateria() {
@@ -66,7 +66,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Muestra la mision del CanBot.
+	 * Muestra la mision del Canbot.
 	 * 
 	 */
 	public TipoMision getTipoMision() {
@@ -74,7 +74,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Muestra el estado del CanBot.
+	 * Muestra el estado del Canbot.
 	 * 
 	 */
 	public Estado getEstado() {
@@ -82,7 +82,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Muestra las misiones completas del CanBot.
+	 * Muestra las misiones completas del Canbot.
 	 * 
 	 */
 	public int getMisionesCompletadas() {
@@ -90,7 +90,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Muestra los enemigos encontrados por CanBot.
+	 * Muestra los enemigos encontrados por Canbot.
 	 * 
 	 */
 	public int getEnemigosEncontrados() {
@@ -98,7 +98,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Muestra los KM recorridos por CanBot.
+	 * Muestra los KM recorridos por Canbot.
 	 * 
 	 */
 	public double getKilometrosRecorridos() {
@@ -106,7 +106,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Muestra la ultima mision del CanBot.
+	 * Muestra la ultima mision del Canbot.
 	 * 
 	 */
 	public TipoMision getUltimoTipoMision() {
@@ -114,7 +114,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Establece la cantidad de enemigos encontrados por el CanBot.
+	 * Establece la cantidad de enemigos encontrados por el Canbot.
 	 * 
 	 */
 	public void setEnemigosEncontrados(int enemigosEncontrados) {
@@ -122,7 +122,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Establece la cantidad de KM que relizo el CanBot.
+	 * Establece la cantidad de KM que relizo el Canbot.
 	 * 
 	 */
 	public void setKilometrosRecorridos(double kilometrosRecorridos) {
@@ -130,7 +130,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Establece el nombre del CanBot.
+	 * Establece el nombre del Canbot.
 	 * 
 	 */
 	public void setNombre(String nombre) {
@@ -138,7 +138,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Establece el nivel de bateria del CanBot.
+	 * Establece el nivel de bateria del Canbot.
 	 * 
 	 */
 	public void setBateria(int bateria) {
@@ -146,7 +146,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Establece el tipo de mision del CanBot.
+	 * Establece el tipo de mision del Canbot.
 	 * 
 	 */
 	public void setTipoMision(TipoMision tipoMision) {
@@ -154,7 +154,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Establece el estado del CanBot.
+	 * Establece el estado del Canbot.
 	 * 
 	 */
 	public void setEstado(Estado estado) {
@@ -162,7 +162,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Establece las misiones completas del CanBot.
+	 * Establece las misiones completas del Canbot.
 	 * 
 	 */
 	public void setMisionesCompletadas(int misionesCompletadas) {
@@ -178,7 +178,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Recarga la bateria del CanBot.
+	 * Recarga la bateria del Canbot.
 	 * 
 	 */
 	public String recargarBateria() {
@@ -188,7 +188,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Genera un cosumo aleatorio de bateria del CanBot.
+	 * Genera un cosumo aleatorio de bateria del Canbot.
 	 * 
 	 */
 	public int ConsumoBateriaAleatorio() {
@@ -197,7 +197,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Descarga la bateria del CanBot.
+	 * Descarga la bateria del Canbot.
 	 * 
 	 */
 	public void descargarBateria(int consumo) {
@@ -205,7 +205,7 @@ public class CanBot {
 	}
 
 	/**
-	 * Termina la mision del CanBot.
+	 * Termina la mision del Canbot.
 	 * 
 	 */
 	public String terminarMision() {
@@ -219,14 +219,14 @@ public class CanBot {
 	        this.misionesCompletadas++;
 
 	        String mensaje = "Mision finalizada. Se consumieron " + consumo + "% de bateria.\n"
-	                       + "CanBot " + nombre + " tiene " + bateria + "% de bateria restante.";
+	                       + "Canbot " + nombre + " tiene " + bateria + "% de bateria restante.";
 
 	        if (this.bateria < 50) {
 	            this.estado = Estado.EN_REPARACION;
 	            mensaje += "\n Bateria critica. Canbot enviado automaticamente a reparacion.";
 	        } else {
 	            this.estado = Estado.DISPONIBLE;
-	            mensaje += "\n CanBot " + nombre + " esta disponible para una nueva mision.";
+	            mensaje += "\n Canbot " + nombre + " esta disponible para una nueva mision.";
 	        }
 
 	        return mensaje;

@@ -8,6 +8,7 @@ import ar.edu.unlam.pb1.dominio.enums.TipoMision;
 
 public class Tareas {
 
+	private static final int BATERIA_MINIMA_MISION = 70;
 	private CanBot[] canbots;
 	private int cantidadActual;
 	private int MAX_CANBOTS = 0;
@@ -19,7 +20,7 @@ public class Tareas {
 	 * Constructor de un Asignador de Tareas.
 	 *
 	 * @param nombre      El nombre del usuario.
-	 * @param MAX_CANBOTS El maximo de CanBot a crear.
+	 * @param MAX_CANBOTS El maximo de Canbot a crear.
 	 */
 	public Tareas(String nombre, int MAX_CANBOTS) {
 		this.nombre = nombre;
@@ -111,7 +112,7 @@ public class Tareas {
 	/**
 	 * Busca por ID.
 	 *
-	 * @param id ID del CanBot
+	 * @param id ID del Canbot
 	 * @return confirma si el ID fue encontrado y lo muestra.
 	 */
 	public CanBot obtenerPorId(int id) {
@@ -124,9 +125,9 @@ public class Tareas {
 	}
 
 	/**
-	 * Activa el CanBot.
+	 * Activa el Canbot.
 	 *
-	 * @param id ID del CanBot
+	 * @param id ID del Canbot
 	 * @return confirma si el ID fue encontrado y lo activa.
 	 */
 	public boolean activarCanBot(int id) {
@@ -141,9 +142,9 @@ public class Tareas {
 	}
 
 	/**
-	 * Desactiva el CanBot.
+	 * Desactiva el Canbot.
 	 *
-	 * @param id ID del CanBot
+	 * @param id ID del Canbot
 	 * @return confirma si el ID fue encontrado y lo desactiva.
 	 */
 	public boolean desactivarCanBot(int id) {
@@ -158,12 +159,12 @@ public class Tareas {
 	}
 
 	/**
-	 * Modifica la informacion del CanBot.
+	 * Modifica la informacion del Canbot.
 	 *
-	 * @param id           ID del CanBot a modificar
-	 * @param nuevoNombre  Es el nuevo nombre del CanBot
-	 * @param nuevaBateria Es el nuevo nivel de bateria del CanBot
-	 * @param nuevaMision  Es la nueva la mision del CanBot
+	 * @param id           ID del Canbot a modificar
+	 * @param nuevoNombre  Es el nuevo nombre del Canbot
+	 * @param nuevaBateria Es el nuevo nivel de bateria del Canbot
+	 * @param nuevaMision  Es la nueva la mision del Canbot
 	 * @return Confirma si el ID fue encontrado y modifica los valores.
 	 */
 	public boolean modificarCanBot(int id, String nuevoNombre, int nuevaBateria, TipoMision nuevaMision) {
@@ -180,7 +181,7 @@ public class Tareas {
 	}
 
 	/**
-	 * Muestra los CanBots.
+	 * Muestra los Canbots.
 	 *
 	 */
 	public String mostrarCanBots() {
@@ -194,65 +195,53 @@ public class Tareas {
 	}
 
 	/**
-	 * Modifica la mision del CanBot.
+	 * Modifica la mision del Canbot.
 	 *
-	 * @param id     ID del CanBot a modificar
+	 * @param id     ID del Canbot a modificar
 	 * @param mision las misiones posibles
 	 * @return confirma si el ID fue encontrado y modifica la mision.
 	 */
 	public Boolean asignarMision(int id, TipoMision mision) {
-		boolean misionAsignada = false;
-		int i = 0;
-		do {
-			if (canbots[i].getId() == id && canbots[i].getBateria() > 70
-					&& canbots[i].getEstado().equals(Estado.DISPONIBLE)) {
-				canbots[i].setTipoMision(mision);
-				canbots[i].setEstado(Estado.EN_MISION);
-				misionAsignada = true;
-			} else if (canbots[i].getId() == id && canbots[i].getBateria() < 70
-					&& canbots[i].getEstado().equals(Estado.DISPONIBLE)) {
-				canbots[i].setEstado(Estado.EN_REPARACION);
+		CanBot bot = obtenerPorId(id);
+		if (bot != null && bot.getEstado() == Estado.DISPONIBLE) {
+			if (bot.getBateria() >= BATERIA_MINIMA_MISION) {
+				bot.setTipoMision(mision);
+				bot.setEstado(Estado.EN_MISION);
+				return true;
 			} else {
-				i++;
+				bot.setEstado(Estado.EN_REPARACION);
 			}
-		} while (!misionAsignada && i < canbots.length);
-		return misionAsignada;
+		}
+		return false;
 	}
 
 	/**
-	 * Carga la bateria del CanBot.
+	 * Carga la bateria del Canbot.
 	 *
-	 * @param id ID del CanBot a modificar
+	 * @param id ID del Canbot a modificar
 	 */
-	public void cargarBot(int id) {
-		int i = 0;
-		boolean cargado = false;
-		do {
-			if (canbots[i] != null && canbots[i].getId() == id) {
-				if (canbots[i].getBateria() < 100) {
-					canbots[i].recargarBateria();
-					System.out.println("Bateria recargada correctamente.");
-					canbots[i].setEstado(Estado.DISPONIBLE);
-				} else {
-					System.out.println("La bateria ya esta al 100%.");
-				}
-				cargado = true;
+	public String cargarBot(int id) {
+		CanBot bot = obtenerPorId(id);
+		if (bot != null) {
+			if (bot.getBateria() < 100) {
+				bot.recargarBateria();
+				bot.setEstado(Estado.DISPONIBLE);
+				return "Bateria recargada correctamente.";
 			}
-			i++;
-		} while (i < canbots.length && !cargado);
-		
-		if (!cargado) {
-			System.err.println("No se encontro un CanBot con ese ID.");
+			return "La bateria ya esta al 100%.";
 		}
+		return "No se encontro un Canbot con ese ID.";
 	}
 
-
+	/**
+	 * Metodo para las estadisticas.
+	 *
+	 */
 	public String mostrarEstadisticasGenerales() {
+
 		int totalEnemigos = 0, maxEnemigos = Integer.MIN_VALUE, minEnemigos = Integer.MAX_VALUE;
 		double totalKm = 0, maxKm = Double.MIN_VALUE, minKm = Double.MAX_VALUE;
-		int totalMisiones = 0;
-		int totalBateria = 0;
-		int totalRecon = 0, totalTransporte = 0;
+		int totalMisiones = 0, totalBateria = 0, totalRecon = 0, totalTransporte = 0;
 
 		for (int i = 0; i < cantidadActual; i++) {
 			CanBot bot = canbots[i];
@@ -260,15 +249,13 @@ public class Tareas {
 				totalBateria += bot.getBateria();
 				totalMisiones += bot.getMisionesCompletadas();
 
-				if (bot.getTipoMision() == TipoMision.RECONOCIMIENTO) {
+				if (bot.getUltimoTipoMision() == TipoMision.RECONOCIMIENTO) {
 					int enemigos = bot.getEnemigosEncontrados();
 					totalEnemigos += enemigos;
 					maxEnemigos = Math.max(maxEnemigos, enemigos);
 					minEnemigos = Math.min(minEnemigos, enemigos);
 					totalRecon++;
-				}
-
-				if (bot.getTipoMision() == TipoMision.TRANSPORTE) {
+				} else if (bot.getUltimoTipoMision() == TipoMision.TRANSPORTE) {
 					double km = bot.getKilometrosRecorridos();
 					totalKm += km;
 					maxKm = Math.max(maxKm, km);
@@ -281,50 +268,47 @@ public class Tareas {
 		String mensaje = "\n--- ESTADÍSTICAS GENERALES ---";
 
 		if (totalRecon > 0) {
-			mensaje += "\n> Enemigos encontrados (Reconocimiento):" + "\n   Máximo: " + maxEnemigos + "\n   Mínimo: "
+			mensaje += "\n> Enemigos encontrados (Reconocimiento):\n   Maximo: " + maxEnemigos + "\n   Minimo: "
 					+ minEnemigos + "\n   Promedio: " + (totalEnemigos / totalRecon);
 		}
 
 		if (totalTransporte > 0) {
-			mensaje += "\n> Kilómetros recorridos (Transporte):" + "\n   Máximo: " + String.format("%.2f", maxKm)
-					+ "\n   Mínimo: " + String.format("%.2f", minKm) + "\n   Promedio: "
+			mensaje += "\n> Kilometros recorridos (Transporte):\n   Maximo: " + String.format("%.2f", maxKm)
+					+ "\n   Minimo: " + String.format("%.2f", minKm) + "\n   Promedio: "
 					+ String.format("%.2f", totalKm / totalTransporte);
 		}
 
 		if (cantidadActual > 0) {
 			mensaje += "\n> Promedio de misiones completadas por bot: " + (totalMisiones / cantidadActual);
-			mensaje += "\n> Promedio de batería restante por bot: " + (totalBateria / cantidadActual) + "%";
+			mensaje += "\n> Promedio de bateria restante por bot: " + (totalBateria / cantidadActual) + "%";
 		}
 
 		return mensaje;
 	}
 
 	/**
-	 * Termina la mision del CanBot.
+	 * Termina la mision del Canbot.
 	 *
-	 * @param id ID del CanBot a modificar
+	 * @param id ID del Canbot a modificar
 	 */
 	public String terminarMisionDeCanBot(int id) {
-		for (int i = 0; i < cantidadActual; i++) {
-			if (canbots[i] != null && canbots[i].getId() == id) {
-				String mensaje = canbots[i].terminarMision();
-				if (canbots[i].getTipoMision() == null && canbots[i].getEstado() == Estado.DISPONIBLE) {
-					if (canbots[i].getUltimoTipoMision() == TipoMision.RECONOCIMIENTO) {
-						int enemigos = new Random().nextInt(51);
-						canbots[i].setEnemigosEncontrados(enemigos);
-					}
-					if (canbots[i].getUltimoTipoMision() == TipoMision.TRANSPORTE) {
-						double km = 10 + (Math.random() * 90);
-						canbots[i].setKilometrosRecorridos(km);
-					}
+		CanBot bot = obtenerPorId(id);
+		if (bot != null) {
+			String mensaje = bot.terminarMision();
+			if (bot.getTipoMision() == null && bot.getEstado() == Estado.DISPONIBLE) {
+				if (bot.getUltimoTipoMision() == TipoMision.RECONOCIMIENTO) {
+					int enemigos = new Random().nextInt(51);
+					bot.setEnemigosEncontrados(enemigos);
+				} else if (bot.getUltimoTipoMision() == TipoMision.TRANSPORTE) {
+					double km = 10 + (Math.random() * 90);
+					bot.setKilometrosRecorridos(km);
 				}
-
-				return mensaje;
 			}
+			return mensaje;
 		}
-		return "CanBot no encontrado.";
+		return "Canbot no encontrado.";
 	}
-	
+
 	/**
 	 * Metodos para ordenar los canbots por topo de mision.
 	 *
@@ -332,14 +316,12 @@ public class Tareas {
 	public String mostrarCanBotsDeReconocimiento() {
 		String mensaje = "--- Canbots de RECONOCIMIENTO ---";
 		boolean hayCoincidencias = false;
-
 		for (int i = 0; i < cantidadActual; i++) {
 			if (canbots[i] != null && TipoMision.RECONOCIMIENTO.equals(canbots[i].getTipoMision())) {
 				mensaje += "\n" + canbots[i].toString();
 				hayCoincidencias = true;
 			}
 		}
-
 		if (!hayCoincidencias) {
 			mensaje += "\n No hay Canbots con mision de reconocimiento.";
 		}
@@ -349,18 +331,15 @@ public class Tareas {
 	public String mostrarCanBotsDeTransporte() {
 		String mensaje = "--- Canbots de TRANSPORTE ---";
 		boolean hayCoincidencias = false;
-
 		for (int i = 0; i < cantidadActual; i++) {
 			if (canbots[i] != null && TipoMision.TRANSPORTE.equals(canbots[i].getTipoMision())) {
 				mensaje += "\n" + canbots[i].toString();
 				hayCoincidencias = true;
 			}
 		}
-
 		if (!hayCoincidencias) {
 			mensaje += "\n No hay Canbots con mision de transporte.";
 		}
 		return mensaje;
 	}
-
 }
