@@ -10,6 +10,15 @@ import ar.edu.unlam.pb1.interfaz.enums.MenuPrincipal;
 
 public class GestionCanBot {
 
+	// Cybercanes Team: Rocio Bossio, Santiago Lavalle, Aixa Oviedo, Thiago Garcia.
+
+	// Un sistema diseñado para gestionar una unidad de bots de asalto programables
+	// en operaciones militares. Cada canino automatizado es un objeto con atributos
+	// como nivel de batería, tipo de misión (reconocimiento, transporte de
+	// suministros) y otros indicadores. El sistema permite la programación de
+	// tareas específicas y la asignación de misiones, optimizando la colaboración
+	// entre los canes y las fuerzas humanas
+
 	private static Scanner teclado = new Scanner(System.in);
 	public static final String RESET = "\u001B[0m";
 	public static final String VERDE = "\u001B[32m";
@@ -58,8 +67,8 @@ public class GestionCanBot {
 			case CREAR_CANBOT:
 				crearCanBot(tarea);
 				break;
-			case ACTIVAR_CANBOT:
-				activarCanBot(tarea);
+			case RESETEAR_CANBOT:
+				resetearCanbot(tarea);
 				break;
 			case DESACTIVAR_CANBOT:
 				desactivarCanBot(tarea);
@@ -167,23 +176,23 @@ public class GestionCanBot {
 	 * Activa el Canbot, Buscando por id dentro del array.
 	 *
 	 */
-	private static void activarCanBot(Tareas tarea) {
+	private static void resetearCanbot(Tareas tarea) {
 		int id = ingresarEntero(CYAN + "Ingrese ID del CanBot:");
 
 		CanBot bot = tarea.obtenerPorId(id);
 
 		if (bot != null) {
-			if (bot.getEstado() == Estado.EN_REPARACION) {
-				bot.recargarBateria();
+			if (bot.getEstado() == Estado.EN_REPARACION || bot.getEstado() == Estado.EN_MISION) {
 				bot.setEstado(Estado.DISPONIBLE);
-				mostrarMensaje(VERDE + "CanBot reparado y activado. Batería recargada al 100%.");
+				bot.setTipoMision(null);
+				mostrarMensaje(VERDE + "Canbot disponible nuevamente. ");
 			} else if (bot.getEstado() == Estado.DISPONIBLE) {
-				mostrarMensaje(AMARILLO + "El CanBot ya esta activo y disponible.");
+				mostrarMensaje(AMARILLO + "El Canbot ya esta activo y disponible.");
 			} else {
-				mostrarError("El CanBot no esta en reparacion. Estado actual: " + bot.getEstado());
+				mostrarError("El Canbot no esta en reparacion. Estado actual: " + bot.getEstado());
 			}
 		} else {
-			mostrarError("No se encontro el CanBot.");
+			mostrarError("No se encontro el Canbot.");
 		}
 	}
 
@@ -193,12 +202,12 @@ public class GestionCanBot {
 	 */
 	private static void desactivarCanBot(Tareas tarea) {
 
-		int id = ingresarEntero("Ingrese ID del CanBot:");
+		int id = ingresarEntero("Ingrese ID del Canbot:");
 
 		if (tarea.desactivarCanBot(id)) {
-			mostrarMensaje("CanBot ha sido desactivado correctamente.");
+			mostrarMensaje("Canbot ha sido desactivado correctamente.");
 		} else {
-			mostrarError("No se encontro el CanBot.");
+			mostrarError("No se encontro el Canbot.");
 		}
 	}
 
@@ -219,9 +228,7 @@ public class GestionCanBot {
 			return;
 		}
 
-		TipoMision tipoMision = elegirTipoMision();
-
-		if (tarea.modificarCanBot(id, nombre, bateria, tipoMision)) {
+		if (tarea.modificarCanBot(id, nombre, bateria)) {
 			mostrarMensaje("Canbot modificado exitosamente.");
 		} else {
 			mostrarError("Canbot no encontrado.");
@@ -251,7 +258,7 @@ public class GestionCanBot {
 	 */
 	private static void cargarCanbot(Tareas tarea) {
 		int id = ingresarEntero("Ingrese ID del CanBot:");
-		tarea.cargarBot(id);
+		mostrarMensaje(VERDE + tarea.cargarBot(id));
 	}
 
 	/**

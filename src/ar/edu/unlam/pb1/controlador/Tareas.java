@@ -8,7 +8,7 @@ import ar.edu.unlam.pb1.dominio.enums.TipoMision;
 
 public class Tareas {
 
-	private static final int BATERIA_MINIMA_MISION = 70;
+	private static final int BATERIA_MINIMA_MISION = 50;
 	private CanBot[] canbots;
 	private int cantidadActual;
 	private int MAX_CANBOTS = 0;
@@ -152,6 +152,7 @@ public class Tareas {
 		for (int i = 0; i < cantidadActual; i++) {
 			if (canbots[i].getId() == id) {
 				canbots[i].setEstado(Estado.EN_REPARACION);
+				canbots[i].setTipoMision(null);
 				desactivado = true;
 			}
 		}
@@ -167,13 +168,12 @@ public class Tareas {
 	 * @param nuevaMision  Es la nueva la mision del Canbot
 	 * @return Confirma si el ID fue encontrado y modifica los valores.
 	 */
-	public boolean modificarCanBot(int id, String nuevoNombre, int nuevaBateria, TipoMision nuevaMision) {
+	public boolean modificarCanBot(int id, String nuevoNombre, int nuevaBateria) {
 		boolean modificado = false;
 		for (int i = 0; i < cantidadActual; i++) {
 			if (canbots[i].getId() == id) {
 				canbots[i].setNombre(nuevoNombre);
 				canbots[i].setBateria(nuevaBateria);
-				canbots[i].setTipoMision(nuevaMision);
 				modificado = true;
 			}
 		}

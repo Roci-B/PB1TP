@@ -171,9 +171,9 @@ public class CanBot {
 
 	@Override
 	public String toString() {
-		return "ID: " + id + "\nNombre: " + nombre + "\nBatería: " + bateria + "%" + "\nMisión: " + tipoMision
+		return "ID: " + id + "\nNombre: " + nombre + "\nBateria: " + bateria + "%" + "\nMision: " + tipoMision
 				+ "\nEstado: " + estado + "\nMisiones completadas: " + misionesCompletadas + "\nEnemigos encontrados: "
-				+ enemigosEncontrados + "\nKilómetros recorridos: " + String.format("%.2f", kilometrosRecorridos)
+				+ enemigosEncontrados + "\nKilometros recorridos: " + String.format("%.2f", kilometrosRecorridos)
 				+ "\n----------------------------";
 	}
 
@@ -209,31 +209,30 @@ public class CanBot {
 	 * 
 	 */
 	public String terminarMision() {
-	    if (this.estado == Estado.EN_MISION) {
-	        this.ultimoTipoMision = this.tipoMision;
+		if (this.estado == Estado.EN_MISION) {
+			this.ultimoTipoMision = this.tipoMision;
 
-	        int consumo = ConsumoBateriaAleatorio();
-	        descargarBateria(consumo);
+			int consumo = ConsumoBateriaAleatorio();
+			descargarBateria(consumo);
 
-	        this.tipoMision = null;
-	        this.misionesCompletadas++;
+			this.tipoMision = null;
+			this.misionesCompletadas++;
 
-	        String mensaje = "Mision finalizada. Se consumieron " + consumo + "% de bateria.\n"
-	                       + "Canbot " + nombre + " tiene " + bateria + "% de bateria restante.";
+			String mensaje = "Mision finalizada. Se consumieron " + consumo + "% de bateria.\n" + "Canbot " + nombre
+					+ " tiene " + bateria + "% de bateria restante.";
 
-	        if (this.bateria < 50) {
-	            this.estado = Estado.EN_REPARACION;
-	            mensaje += "\n Bateria critica. Canbot enviado automaticamente a reparacion.";
-	        } else {
-	            this.estado = Estado.DISPONIBLE;
-	            mensaje += "\n Canbot " + nombre + " esta disponible para una nueva mision.";
-	        }
+			if (this.bateria < 50) {
+				this.estado = Estado.EN_REPARACION;
+				mensaje += "\n Bateria critica. Canbot enviado automaticamente a reparacion.";
+			} else {
+				this.estado = Estado.DISPONIBLE;
+				mensaje += "\n Canbot " + nombre + " esta disponible para una nueva mision.";
+			}
 
-	        return mensaje;
-	    } else {
-	        return "Este Canbot no esta en una mision actualmente.";
-	    }
+			return mensaje;
+		} else {
+			return "Este Canbot no esta en una mision actualmente.";
+		}
 	}
-
 
 }
